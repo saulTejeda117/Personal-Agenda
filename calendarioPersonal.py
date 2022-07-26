@@ -33,7 +33,6 @@ def main():
 
     # Shows entire Calendar
     def show_calendar(mainWindow, currentMonth, currentYear):
-        
         today = date.today()
         if(currentMonth == None):
             currentYear = today.year
@@ -47,7 +46,65 @@ def main():
             year = str(currentYear)
             dateName = dateName + ' ' + year
 
-        
+        numDias = 31
+        a = 10
+        i = 0
+        # get the first-day of the month
+
+        def add_event():
+            x = 0
+            horas = [None] * 12
+            hour = 1
+            while x < 12:
+                horas[x] = str(hour) 
+                if(hour < 10):
+                    last = str(hour) 
+                    horas[x] = '0' + last
+                hour += 1
+                x+=1
+            ampm = ['AM', 'PM']
+
+            y = 0
+            min = 0
+            minutos = [None]*12
+            while min < 60:
+                if(min < 10):
+                    last = str(min) 
+                    minutos[y] = '0' + last
+                else: 
+                    minutos[y] = str(min) 
+                min+=5
+                y+=1
+
+            eventWindow = Toplevel(mainWindow)
+            eventWindow.title('Añadir Evento')
+            eventWindow.config(width = 300, height = 200)
+            seleccionHora = tk.StringVar(eventWindow)
+
+            tk.Label(eventWindow, text = 'Nombre:', fg ='#000000', font = ('DS-DIGIB.TTF', 14)).place(x=20,y=10)
+            tk.Entry(eventWindow, width=25).place(x=110, y=16)
+
+            tk.Label(eventWindow, text = 'Hora:', fg ='#000000', font = ('DS-DIGIB.TTF', 15)).place(x=20,y=50)
+            seleccionHora.set(horas[0])
+            menuhoras = tk.OptionMenu(eventWindow, seleccionHora,*horas)
+
+            seleccionMinuto = tk.StringVar(eventWindow)
+            seleccionMinuto.set(minutos[0])
+            menuminutos = tk.OptionMenu(eventWindow, seleccionMinuto, *minutos)
+
+
+            seleccionAMPM = tk.StringVar(eventWindow)
+            seleccionAMPM.set(ampm[0])
+            menuampm = tk.OptionMenu(eventWindow, seleccionAMPM, *ampm)
+            # ↓ ↑
+            menuhoras["borderwidth"] = 0
+            menuminutos["borderwidth"] = 0
+            menuampm["borderwidth"] = 0
+            menuampm["highlightthickness"]=0
+            menuhoras.place(x=100,y=50)
+            menuminutos.place(x=150,y=50)
+            menuampm.place(x=200,y=50)
+
         numDias = 31
         a = 10
         i = 0
@@ -71,11 +128,11 @@ def main():
             while day < numDias:
                 while week < 7:
                     if(day == today.day and currentMonth == today.month):
-                        tk.Button(mainWindow, text = day, name = str(day), bg = '#CACFD2', border = 0, width= 5, height = 2).place(x = posx + 600, y = posy)
+                        tk.Button(mainWindow, text = day, name = str(day), bg = '#CACFD2', border = 0, width= 5, height = 2, command=add_event).place(x = posx + 600, y = posy)
                         if(delete != None):
                             deleteMonthDays()
                     else:
-                        tk.Button(mainWindow, text = day, name = str(day), border = 0, width= 5, height = 2 ).place(x = posx + 600, y = posy)
+                        tk.Button(mainWindow, text = day, name = str(day), border = 0, width= 5, height = 2 , command=add_event).place(x = posx + 600, y = posy)
                         if(delete != None):
                             deleteMonthDays()
                     if(day >= numDias):
@@ -88,6 +145,7 @@ def main():
                 posy += 45
 
         configure_day(None) 
+        # Detect Current Month/Year
         def year_comprobation(mainWindow, currentMonth, currentYear):
             if(currentMonth > 12):
                 configure_day('1')
@@ -98,7 +156,10 @@ def main():
             else:
                 configure_day('1')
                 show_calendar(mainWindow, currentMonth, currentYear)
-
+        # Show Buttons:
+        # -> Forward
+        # -> Back
+        # -> Current Month/Year
         tk.Button(mainWindow, text = dateName, fg ='#000000', border = 0, justify = 'center', width = 14, font = ('DS-DIGIB.TTF', 24)).place(x = 640, y = 0)
         tk.Button(mainWindow, text= '◄', fg ='#000000', border = 0, font = ('DS-DIGIB.TTF', 24), command = lambda: year_comprobation(mainWindow, currentMonth - 1, currentYear)).place(x = 600, y = 0)
         tk.Button(mainWindow, text= '►', fg ='#000000', border = 0, font = ('DS-DIGIB.TTF', 24), command = lambda: year_comprobation(mainWindow, currentMonth + 1, currentYear)).place(x = 895, y = 0)
