@@ -48,17 +48,7 @@ def main():
             year = str(currentYear)
             dateName = dateName + ' ' + year
 
-
-
-        def show_event(diaDeEvento, evento):
-            showEventWindow = Toplevel(mainWindow)
-            showEventWindow.title('Evento del Dia')
-            showEventWindow.config(width = 300, height = 200)
-
-            tk.Label(showEventWindow, text =  evento, fg ='#000000', font = ('DS-DIGIB.TTF', 15)).place(x=20,y=50)
-            
-
-            
+        
 
         def add_event(nombreBoton):
             addEventWindow = Toplevel(mainWindow)
@@ -102,12 +92,12 @@ def main():
             addEventWindow.config(width = 300, height = 200)
             seleccionHora = tk.StringVar(addEventWindow)
 
-            tk.Label(addEventWindow, text = 'Nombre:', fg ='#000000', font = ('DS-DIGIB.TTF', 14)).place(x=20,y=10)
-            nombreEvento = tk.Entry(addEventWindow, width=25, border=1)
+            tk.Label(addEventWindow, text = 'Nombre:', fg ='#000000', font = ('DS-DIGIB.TTF', 14)).place(x = 20, y = 10)
+            nombreEvento = tk.Entry(addEventWindow, width=25, border = 1)
 
-            tk.Label(addEventWindow, text = 'Hora:', fg ='#000000', font = ('DS-DIGIB.TTF', 15)).place(x=20,y=50)
+            tk.Label(addEventWindow, text = 'Hora:', fg ='#000000', font = ('DS-DIGIB.TTF', 15)).place(x = 20, y = 50)
             seleccionHora.set(horas[0])
-            menuhoras = tk.OptionMenu(addEventWindow, seleccionHora,*horas)
+            menuhoras = tk.OptionMenu(addEventWindow, seleccionHora, *horas)
 
             seleccionMinuto = tk.StringVar(addEventWindow)
             seleccionMinuto.set(minutos[0])
@@ -117,15 +107,50 @@ def main():
             seleccionAMPM.set(ampm[0])
             menuampm = tk.OptionMenu(addEventWindow, seleccionAMPM, *ampm)
 
-            tk.Button(addEventWindow, text =' Guardar Evento', bg='#CACFD2', border=0, command= lambda: save_event(seleccionHora.get(),seleccionMinuto.get(),seleccionAMPM.get(), nombreEvento.get())).place(x=125,y=100)
+            tk.Label(addEventWindow, text = 'Color:', fg ='#000000', font = ('DS-DIGIB.TTF', 15)).place(x = 20, y = 90)
+            colores = ['#EDBB99', '#AED6F1', '#ABEBC6']
+            colors = 0
+            positionx = 100
+            def save_eventColor(color, botonColor):
+                nombreBoton = addEventWindow.nametowidget(botonColor)
+                nombreBoton.config(width= 2, height = 1)
+                print(color, botonColor)
+
+            while colors < 3:
+                tk.Button(addEventWindow, border = 0, name = str(colors), bg = colores[colors], width= 5, height = 2, command = lambda color = colores[colors], nombreboton = colors: save_eventColor(color, nombreboton)).place(x = positionx, y = 90)
+                colors += 1
+                positionx += 50
+            tk.Button(addEventWindow, text =' Guardar Evento', bg = '#CACFD2', border = 0, command = lambda: save_event(seleccionHora.get(), seleccionMinuto.get(), seleccionAMPM.get(), nombreEvento.get())).place(x = 110, y = 150)
             # ↓ ↑
             # menuhoras["borderwidth"] = 0
             # menuminutos["borderwidth"] = 0
             # menuampm["borderwidth"] = 0
-            menuhoras.place(x=100,y=50)
-            menuminutos.place(x=150,y=50)
-            menuampm.place(x=200,y=50)
-            nombreEvento.place(x=110, y=16)
+            menuhoras.place(x = 100, y = 50)
+            menuminutos.place(x = 150, y = 50)
+            menuampm.place(x = 200,y = 50)
+            nombreEvento.place(x = 110, y = 16)
+
+        def show_event(diaDeEvento, evento):
+            showEventWindow = Toplevel(mainWindow)
+            showEventWindow.title('Evento del Dia')
+            showEventWindow.config(width = 500, height = 200)
+            eventDate = evento[0]
+            eventName = evento[1]
+            eventName = eventName.split('_')
+            eventHour = eventName[1]
+            eventName = eventName[0] 
+            eventName = eventName.replace('¶', ' ')
+            
+            tk.Label(showEventWindow, text = 'Nombre del Evento: ', fg ='#000000', font = ('DS-DIGIB.TTF', 15)).place(x = 10, y = 20)
+            tk.Label(showEventWindow, text = eventName, fg ='#979A9A', font = ('DS-DIGIB.TTF', 15)).place(x = 200, y =20)
+
+            tk.Label(showEventWindow, text = 'Fecha del Evento: ', fg ='#000000', font = ('DS-DIGIB.TTF', 15)).place(x=10,y=60)
+            tk.Label(showEventWindow, text = eventDate, fg ='#979A9A', font = ('DS-DIGIB.TTF', 15)).place(x = 200, y = 60)
+
+            tk.Label(showEventWindow, text = 'Hora del Evento: ', fg ='#000000', font = ('DS-DIGIB.TTF', 15)).place(x=10,y=100)
+            tk.Label(showEventWindow, text = eventHour, fg ='#979A9A', font = ('DS-DIGIB.TTF', 15)).place(x = 200, y = 100)
+
+            #tk.Button(showEventWindow, text = 'Add an Event', command = lambda: add_event(diaDeEvento))
 
         numDias = 31
         if(currentMonth == 2):
