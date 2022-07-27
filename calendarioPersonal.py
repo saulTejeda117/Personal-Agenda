@@ -48,29 +48,33 @@ def main():
             year = str(currentYear)
             dateName = dateName + ' ' + year
 
-        numDias = 31
-        a = 10
-        i = 0
-        # get the first-day of the month
 
-        
 
+        def show_event(diaDeEvento, evento):
+            showEventWindow = Toplevel(mainWindow)
+            showEventWindow.title('Evento del Dia')
+            showEventWindow.config(width = 300, height = 200)
+
+            tk.Label(showEventWindow, text =  evento, fg ='#000000', font = ('DS-DIGIB.TTF', 15)).place(x=20,y=50)
+            
+
+            
 
         def add_event(nombreBoton):
-            eventWindow = Toplevel(mainWindow)
-            killday = mainWindow.nametowidget(nombreBoton)
-            killday.place_forget()
+            addEventWindow = Toplevel(mainWindow)
             def save_event(seleccionHora,seleccionMinuto,seleccionAMPM, nombreEvento):
-                eventWindow.destroy()
-                print(nombreEvento, ':', seleccionHora,seleccionMinuto,seleccionAMPM)
+                addEventWindow.destroy()
+                mainWindow.destroy()
+                nombreEvento = nombreEvento.replace(' ', '¶')
+                # Save an event in a txt file
                 fileExists = os.path.exists('EventList.txt')
                 if (fileExists == True):
                     with open("EventList.txt", "a") as f:
-                        f.write(str(currentMonth) + '/' + nombreBoton + '/' + str(currentYear) + ' ' + nombreEvento + ':' + seleccionHora + ',' + seleccionMinuto + ',' + seleccionAMPM + '\n')
+                        f.write(str(nombreBoton) + '/' + str(currentMonth) + '/' +  str(currentYear) + ' ' + nombreEvento + '_' + seleccionHora + ':' + seleccionMinuto + ':' + seleccionAMPM + '\n')
                 else:
                     with open("EventList.txt", "w") as f:
-                        f.write(str(currentMonth) + '/' + nombreBoton + '/' + str(currentYear) + ' ' + nombreEvento + ': ' + seleccionHora + ':' + seleccionMinuto + ':' + seleccionAMPM + '\n')
-
+                        f.write(str(nombreBoton) + '/' + str(currentMonth) + '/' +  str(currentYear) + ' ' + nombreEvento + '_' + seleccionHora + ':' + seleccionMinuto + ':' + seleccionAMPM + '\n')
+                main()
             x = 0
             horas = [None] * 12
             hour = 1
@@ -94,41 +98,38 @@ def main():
                 min+=5
                 y+=1
 
-            
-            eventWindow.title('Añadir Evento')
-            eventWindow.config(width = 300, height = 200)
-            seleccionHora = tk.StringVar(eventWindow)
+            addEventWindow.title('Añadir Evento')
+            addEventWindow.config(width = 300, height = 200)
+            seleccionHora = tk.StringVar(addEventWindow)
 
-            tk.Label(eventWindow, text = 'Nombre:', fg ='#000000', font = ('DS-DIGIB.TTF', 14)).place(x=20,y=10)
-            nombreEvento = tk.Entry(eventWindow, width=25, border=1)
+            tk.Label(addEventWindow, text = 'Nombre:', fg ='#000000', font = ('DS-DIGIB.TTF', 14)).place(x=20,y=10)
+            nombreEvento = tk.Entry(addEventWindow, width=25, border=1)
 
-            tk.Label(eventWindow, text = 'Hora:', fg ='#000000', font = ('DS-DIGIB.TTF', 15)).place(x=20,y=50)
+            tk.Label(addEventWindow, text = 'Hora:', fg ='#000000', font = ('DS-DIGIB.TTF', 15)).place(x=20,y=50)
             seleccionHora.set(horas[0])
-            menuhoras = tk.OptionMenu(eventWindow, seleccionHora,*horas)
+            menuhoras = tk.OptionMenu(addEventWindow, seleccionHora,*horas)
 
-            seleccionMinuto = tk.StringVar(eventWindow)
+            seleccionMinuto = tk.StringVar(addEventWindow)
             seleccionMinuto.set(minutos[0])
-            menuminutos = tk.OptionMenu(eventWindow, seleccionMinuto, *minutos)
+            menuminutos = tk.OptionMenu(addEventWindow, seleccionMinuto, *minutos)
 
-            seleccionAMPM = tk.StringVar(eventWindow)
+            seleccionAMPM = tk.StringVar(addEventWindow)
             seleccionAMPM.set(ampm[0])
-            menuampm = tk.OptionMenu(eventWindow, seleccionAMPM, *ampm)
+            menuampm = tk.OptionMenu(addEventWindow, seleccionAMPM, *ampm)
 
-
-
-            tk.Button(eventWindow, text =' Guardar Evento', bg='#CACFD2', border=0, command= lambda: save_event(seleccionHora.get(),seleccionMinuto.get(),seleccionAMPM.get(), nombreEvento.get())).place(x=125,y=100)
+            tk.Button(addEventWindow, text =' Guardar Evento', bg='#CACFD2', border=0, command= lambda: save_event(seleccionHora.get(),seleccionMinuto.get(),seleccionAMPM.get(), nombreEvento.get())).place(x=125,y=100)
             # ↓ ↑
             # menuhoras["borderwidth"] = 0
             # menuminutos["borderwidth"] = 0
             # menuampm["borderwidth"] = 0
-
             menuhoras.place(x=100,y=50)
             menuminutos.place(x=150,y=50)
             menuampm.place(x=200,y=50)
             nombreEvento.place(x=110, y=16)
-           
 
         numDias = 31
+        if(currentMonth == 2):
+            numDias = 28
         a = 10
         i = 0
         # get the first-day of the month
@@ -147,22 +148,41 @@ def main():
                     killday = mainWindow.nametowidget(deletedDay)
                     killday.place_forget()
                     deletedDay += 1
-
+            rfile = 'EventList.txt'
+            
             while day < numDias:
                 while week < 7:
-                    if(day == today.day and currentMonth == today.month):
-                        tk.Button(mainWindow, text = day, name = str(day), bg = '#CACFD2', border = 0, width= 5, height = 2, command = lambda : add_event(str(day))).place(x = posx + 600, y = posy)
+                    if(day == today.day and currentMonth == today.month and currentYear == today.year):
+                        tk.Button(mainWindow, text = day, name = str(day), bg = '#CACFD2', border = 0, width= 5, height = 2, command = lambda dia = day: add_event(dia)).place(x = posx + 600, y = posy)
                         if(delete != None):
                             deleteMonthDays()
                     else:
-                        tk.Button(mainWindow, text = day, name = str(day), border = 0, width= 5, height = 2 , command = lambda : add_event(str(day))).place(x = posx + 600, y = posy)
+                        tk.Button(mainWindow, text = day, name = str(day), border = 0, width= 5, height = 2 , command = lambda dia = day: add_event(dia)).place(x = posx + 600, y = posy)
                         if(delete != None):
                             deleteMonthDays()
+                    with open(rfile) as f:
+                        lines = f.readlines()
+                    i = 0
+                    while i < len(lines):
+                        date = lines[i].split(' ')
+                        eventDayInfo = date[0]
+                        eventDayInfo = eventDayInfo.split('/')
+                        eventDay = eventDayInfo[0]
+                        eventMont = eventDayInfo[1]
+                        eventYear = eventDayInfo[2]
+                        if(eventMont == str(currentMonth)):
+                            if(eventDay == str(day)):
+                                tk.Button(mainWindow, text = day, name = str(day), bg = '#AED6F1', border = 0, width= 5, height = 2, command = lambda dia = day, evento=date: show_event(dia, evento)).place(x = posx + 600, y = posy)
+                                if(delete != None):
+                                    deleteMonthDays()
+                                i += 1
+                        i += 1
                     if(day >= numDias):
                         break
                     week += 1
                     day +=1
                     posx += 50
+                    i +=1
                 week = 0
                 posx = 0
                 posy += 45
@@ -203,8 +223,7 @@ def main():
             elif(i == 6):
                 tk.Label(mainWindow, text = 'Su', fg ='#979A9A', font = ('DS-DIGIB.TTF', 12)).place(x = a + 600, y = 60)
             a += 50
-            i += 1
-        
+            i += 1   
     # Bucle with tkinter mainloop()
     show_calendar(mainWindow, None, None)
     def myMainLoop():
