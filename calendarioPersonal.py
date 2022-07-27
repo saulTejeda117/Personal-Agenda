@@ -52,7 +52,7 @@ def main():
 
         def add_event(nombreBoton):
             addEventWindow = Toplevel(mainWindow)
-            def save_event(seleccionHora,seleccionMinuto,seleccionAMPM, nombreEvento):
+            def save_event(seleccionHora,seleccionMinuto,seleccionAMPM, nombreEvento, seleccionColor):
                 addEventWindow.destroy()
                 mainWindow.destroy()
                 nombreEvento = nombreEvento.replace(' ', '¶')
@@ -60,10 +60,10 @@ def main():
                 fileExists = os.path.exists('EventList.txt')
                 if (fileExists == True):
                     with open("EventList.txt", "a") as f:
-                        f.write(str(nombreBoton) + '/' + str(currentMonth) + '/' +  str(currentYear) + ' ' + nombreEvento + '_' + seleccionHora + ':' + seleccionMinuto + ':' + seleccionAMPM + '\n')
+                        f.write(str(nombreBoton) + '/' + str(currentMonth) + '/' +  str(currentYear) + ' ' + nombreEvento + '_' + seleccionHora + ':' + seleccionMinuto + ':' + seleccionAMPM + '_' + seleccionColor+ '_' +'\n')
                 else:
                     with open("EventList.txt", "w") as f:
-                        f.write(str(nombreBoton) + '/' + str(currentMonth) + '/' +  str(currentYear) + ' ' + nombreEvento + '_' + seleccionHora + ':' + seleccionMinuto + ':' + seleccionAMPM + '\n')
+                        f.write(str(nombreBoton) + '/' + str(currentMonth) + '/' +  str(currentYear) + ' ' + nombreEvento + '_' + seleccionHora + ':' + seleccionMinuto + ':' + seleccionAMPM + '_' + seleccionColor + '_' +'\n')
                 main()
             x = 0
             horas = [None] * 12
@@ -111,16 +111,26 @@ def main():
             colores = ['#EDBB99', '#AED6F1', '#ABEBC6']
             colors = 0
             positionx = 100
-            def save_eventColor(color, botonColor):
+            
+            def save_eventColor(color, botonColor, nombreDeBotonSeleccionado, seleccionDeColor):
                 nombreBoton = addEventWindow.nametowidget(botonColor)
+                if(nombreDeBotonSeleccionado != botonColor and nombreDeBotonSeleccionado[0] != None):
+                    seleccionAnterior = addEventWindow.nametowidget(nombreDeBotonSeleccionado[0])
+                    seleccionAnterior.config(width= 5, height = 2)
                 nombreBoton.config(width= 2, height = 1)
-                print(color, botonColor)
+                nombreDeBotonSeleccionado[0] =  botonColor
+                seleccionDeColor[0] = color
+                print(seleccionDeColor)
 
+            nombreDeBotonSeleccionado = [None]*1
+            seleccionDeColor = [None]*1
             while colors < 3:
-                tk.Button(addEventWindow, border = 0, name = str(colors), bg = colores[colors], width= 5, height = 2, command = lambda color = colores[colors], nombreboton = colors: save_eventColor(color, nombreboton)).place(x = positionx, y = 90)
+                
+                tk.Button(addEventWindow, border = 0, name = str(colors), bg = colores[colors], width= 5, height = 2, command = lambda color = colores[colors], nombreboton = colors: save_eventColor(color, nombreboton,nombreDeBotonSeleccionado,seleccionDeColor)).place(x = positionx, y = 90)
                 colors += 1
                 positionx += 50
-            tk.Button(addEventWindow, text =' Guardar Evento', bg = '#CACFD2', border = 0, command = lambda: save_event(seleccionHora.get(), seleccionMinuto.get(), seleccionAMPM.get(), nombreEvento.get())).place(x = 110, y = 150)
+           
+            tk.Button(addEventWindow, text =' Guardar Evento', bg = '#CACFD2', border = 0, command = lambda: save_event(seleccionHora.get(), seleccionMinuto.get(), seleccionAMPM.get(), nombreEvento.get(), seleccionDeColor[0])).place(x = 110, y = 150)
             # ↓ ↑
             # menuhoras["borderwidth"] = 0
             # menuminutos["borderwidth"] = 0
@@ -195,9 +205,12 @@ def main():
                         eventDay = eventDayInfo[0]
                         eventMont = eventDayInfo[1]
                         eventYear = eventDayInfo[2]
+
+                        colorEvent = date[1].split('_')
+                        colorEvent = colorEvent[2]
                         if(eventMont == str(currentMonth)):
                             if(eventDay == str(day)):
-                                tk.Button(mainWindow, text = day, name = str(day), bg = '#AED6F1', border = 0, width= 5, height = 2, command = lambda dia = day, evento=date: show_event(dia, evento)).place(x = posx + 600, y = posy)
+                                tk.Button(mainWindow, text = day, name = str(day), bg = colorEvent, border = 0, width= 5, height = 2, command = lambda dia = day, evento=date: show_event(dia, evento)).place(x = posx + 600, y = posy)
                                 if(delete != None):
                                     deleteMonthDays()
                                 i += 1
