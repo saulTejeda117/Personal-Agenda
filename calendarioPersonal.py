@@ -120,8 +120,6 @@ def main():
                 nombreBoton.config(width= 2, height = 1)
                 nombreDeBotonSeleccionado[0] =  botonColor
                 seleccionDeColor[0] = color
-                print(seleccionDeColor)
-
             nombreDeBotonSeleccionado = [None]*1
             seleccionDeColor = [None]*1
             while colors < 3:
@@ -266,7 +264,7 @@ def main():
     show_calendar(mainWindow, None, None)
     def myMainLoop():
         show_date(mainWindow)
-        mainWindow.after(1, myMainLoop)
+        mainWindow.after(500, myMainLoop)
     mainWindow.after(1, myMainLoop)
     mainWindow.mainloop()
 
